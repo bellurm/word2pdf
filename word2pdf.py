@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import tkinter.font as font
 import os
 from docx2pdf import convert
@@ -8,16 +8,19 @@ root = tk.Tk()
 root.title("DOCX to PDF")
 
 def add_file():
-    file_path = filedialog.askopenfilename(initialdir = "/", title = "Select File")
-    convert(file_path)
-    info = tk.Label(frame, text="Converted Successfully!", font=24, bg="green", fg="white")
-    info.pack()
+    file_path = filedialog.askopenfilename(title="Select DOCX", filetypes=[("Word documents", "*.docx")])
+    if not file_path:
+        return
+    try:
+        word2pdf(file_path)
+    except Exception as exc:
+        messagebox.showerror("Conversion failed", str(exc))
+        return
+    messagebox.showinfo("Conversion complete", "PDF saved beside the source document.")
 
 def word2pdf(file_path):
-    location = r""
-    cv = convert(file_path)
-    cv.convert(location, start=0, end=None)
-    cv.close()
+    # docx2pdf.convert performs the conversion and returns None.
+    convert(file_path)
 
 canvas = tk.Canvas(root, height = 500, width = 600)
 canvas.pack()
